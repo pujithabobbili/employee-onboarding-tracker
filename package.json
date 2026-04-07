@@ -1,0 +1,20 @@
+{
+  "name": "employee-onboarding-tracker",
+  "version": "1.0.0",
+  "description": "Full-stack Employee Onboarding Task Tracker using Cloudflare Workers, D1, and React",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "db:migrate": "wrangler d1 migrations apply",
+    "db:seed": "wrangler d1 execute --local --command='INSERT INTO employees (name, email, role, department) VALUES (\"John Doe\", \"john.doe@company.com\", \"employee\", \"Engineering\"), (\"Jane Smith\", \"jane.smith@company.com\", \"admin\", \"HR\"), (\"Mike Johnson\", \"mike.johnson@company.com\", \"employee\", \"Marketing\")'"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "wrangler": "^3.22.1"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.0"
+  }
+}

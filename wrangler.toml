@@ -1,0 +1,24 @@
+name = "employee-onboarding-tracker"
+main = "src/index.js"
+compatibility_date = "2023-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "employee-onboarding-db"
+database_id = "736fabb1-6233-4aa3-9d3b-a057c033010f"
+
+[env.production]
+name = "employee-onboarding-tracker-prod"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "employee-onboarding-db"
+database_id = "736fabb1-6233-4aa3-9d3b-a057c033010f"
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "employee-onboarding-db"
+database_id = "736fabb1-6233-4aa3-9d3b-a057c033010f"
+
+[vars]
+ENVIRONMENT = "development"
