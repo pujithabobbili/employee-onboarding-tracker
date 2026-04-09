@@ -197,7 +197,7 @@ router.get('/tasks/:employeeId', async (request, env, ctx) => {
     return jsonResponse({ success: false, error: 'Access denied' }, 403);
   }
 
-  const { employeeId } = ctx.params;
+  const { employeeId } = request.params;
   
   try {
     const tasks = await env.DB.prepare(`
@@ -217,7 +217,7 @@ router.patch('/tasks/:id', async (request, env, ctx) => {
     return jsonResponse({ success: false, error: 'Admin access required' }, 403);
   }
 
-  const { id } = ctx.params;
+  const { id } = request.params;
   
   try {
     const data = await request.json();
@@ -260,7 +260,7 @@ router.delete('/tasks/:id', async (request, env, ctx) => {
     return jsonResponse({ success: false, error: 'Admin access required' }, 403);
   }
 
-  const { id } = ctx.params;
+  const { id } = request.params;
   
   try {
     const stmt = env.DB.prepare('DELETE FROM tasks WHERE id = ?');
