@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { apiClient } from '../services/api';
+import { getTemplatesForDepartment, calculateDueDate } from '../data/taskTemplates';
+import { notificationService } from '../services/notifications';
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [autoCreateTasks, setAutoCreateTasks] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -34,12 +38,41 @@ const Employees = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await apiClient.createEmployee(formData);
+      const newEmployee = await apiClient.createEmployee(formData);
+      toast.success(`${formData.name} added successfully!`);
+      
+      // Send welcome email
+      await notificationService.sendWelcomeEmail(newEmployee);
+      
+      // Auto-create tasks from templates if enabled
+      if (autoCreateTasks && formData.department) {
+        const templates = getTemplatesForDepartment(formData.department);
+        if (templates.length > 0) {
+          let tasksCreated = 0;
+          for (const template of templates) {
+            try {
+              await apiClient.createTask({
+                ...template,
+                employee_id: newEmployee.id,
+                due_date: calculateDueDate(template.daysFromStart),
+                status: 'pending',
+              });
+              tasksCreated++;
+            } catch (taskErr) {
+              console.error('Error creating task:', taskErr);
+            }
+          }
+          if (tasksCreated > 0) {
+            toast.success(`${tasksCreated} onboarding tasks created automatically!`);
+          }
+        }
+      }
+      
       setShowAddForm(false);
       setFormData({ name: '', email: '', role: 'employee', department: '' });
       loadEmployees();
     } catch (err) {
-      alert('Error creating employee: ' + err.message);
+      toast.error('Error creating employee: ' + err.message);
     }
   };
 
@@ -140,6 +173,24 @@ const Employees = () => {
                 />
               </div>
             </div>
+            
+            {/* Auto-create tasks checkbox */}
+            <div className="flex items-center space-x-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <input
+                type="checkbox"
+                id="autoCreateTasks"
+                checked={autoCreateTasks}
+                onChange={(e) => setAutoCreateTasks(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="autoCreateTasks" className="text-sm text-gray-700">
+                <span className="font-medium">Auto-create onboarding tasks</span>
+                {formData.department && (
+                  <span className="text-gray-600"> ({getTemplatesForDepartment(formData.department).length} tasks for {formData.department})</span>
+                )}
+              </label>
+            </div>
+            
             <div className="flex space-x-4">
               <button
                 type="submit"
@@ -158,6 +209,8 @@ const Employees = () => {
           </form>
         </div>
       )}
+
+      <Toaster position="top-right" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {employees.map((employee) => (

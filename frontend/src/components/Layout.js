@@ -10,6 +10,7 @@ const Layout = ({ children }) => {
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Employees', href: '/employees' },
     { name: 'Tasks', href: '/tasks' },
+    { name: 'Analytics', href: '/analytics' },
   ];
 
   const isActive = (href) => location.pathname === href;

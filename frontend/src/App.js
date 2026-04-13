@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
 import EmployeeDetail from './pages/EmployeeDetail';
 import Tasks from './pages/Tasks';
+import Analytics from './pages/Analytics';
 import RoleSwitcher from './components/RoleSwitcher';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
                       <Route path="/employees" element={<Employees />} />
                       <Route path="/employees/:id" element={<EmployeeDetail />} />
                       <Route path="/tasks" element={<Tasks />} />
+                      <Route path="/analytics" element={<Analytics />} />
                     </Routes>
                   </div>
                 </Layout>
